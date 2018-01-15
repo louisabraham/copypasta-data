@@ -36,3 +36,10 @@ If you have keras installed, just run `./copypasta.py`
 # TODO
 
 Use a better model with more layers, validation and dropout.
+
+# References
+
+- Andrej Karpathy, [The Unreasonable Effectiveness of Recurrent Neural Networks](https://karpathy.github.io/2015/05/21/rnn-effectiveness/)
+
+- Alex Graves, [Generating Sequences With
+Recurrent Neural Networks](https://arxiv.org/pdf/1308.0850.pdf)
