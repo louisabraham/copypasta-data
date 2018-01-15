@@ -16,7 +16,7 @@ from __future__ import print_function
 from keras.callbacks import LambdaCallback
 from keras.models import Sequential
 from keras.layers import Dense, Activation
-from keras.layers import LSTM
+from keras.layers import GRU, Dropout, Bidirectional, InputLayer
 from keras.optimizers import RMSprop
 from keras.utils.data_utils import get_file
 import numpy as np
@@ -24,8 +24,8 @@ import random
 import sys
 import io
 
-text = io.open('copypasta.txt', encoding='utf-8').read()
-text += io.open('copypasta2.txt', encoding='utf-8').read()
+text = io.open('reddit.txt', encoding='utf-8').read()
+# text += io.open('copypasta2.txt', encoding='utf-8').read()
 print('corpus length:', len(text))
 
 chars = sorted(list(set(text)))
@@ -55,13 +55,20 @@ for i, sentence in enumerate(sentences):
 # build the model: a single LSTM
 print('Build model...')
 model = Sequential()
-model.add(LSTM(256, input_shape=(maxlen, len(chars))))
+model.add(InputLayer(input_shape=(maxlen, len(chars))))
+model.add(Bidirectional(GRU(128, return_sequences=True, unroll=True)))
+model.add(Dropout(.5))
+model.add(Bidirectional(GRU(64, unroll=True)))
+model.add(Dropout(.5))
+model.add(Dense(128))
+model.add(Dropout(.5))
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
 
-optimizer = RMSprop(lr=0.001)
+optimizer = RMSprop(lr=0.01)
 model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 
+model.summary()
 
 def sample(preds, temperature=1.0):
     # helper function to sample an index from a probability array
@@ -109,6 +116,9 @@ def on_epoch_end(epoch, logs):
 print_callback = LambdaCallback(on_epoch_end=on_epoch_end)
 
 model.fit(x, y,
-          batch_size=256,
-          epochs=600,
+          batch_size=512,
+          epochs=21,
+          validation_split=0.1,
           callbacks=[print_callback])
+
+model.save('model_reddit.h5')
