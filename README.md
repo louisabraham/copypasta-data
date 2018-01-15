@@ -31,7 +31,7 @@ I modified the keras example `lstm_text_generation.py` available
 [here](https://github.com/keras-team/keras/blob/master/examples/lstm_text_generation.py)
 to run on our dataset.
 
-I use two layers of GRU (Gated Recurrent Units) instead of LSTM, with .5
+I use two layers of Bidirectional GRU (Gated Recurrent Units) instead of LSTM, with .5
 Dropout layers between them. Here is the summary:
 
     _________________________________________________________________
