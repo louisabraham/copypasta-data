@@ -2,9 +2,9 @@
 
 I provide scripts to scrape:
 
-    - https://twitch.gimu.org/
-    - https://www.twitchquotes.com/copypastas
-    - https://www.reddit.com/r/copypasta/top/?sort=top&t=all
+- https://twitch.gimu.org/
+- https://www.twitchquotes.com/copypastas
+- https://www.reddit.com/r/copypasta/top/?sort=top&t=all
 
 as well as their output.
 
