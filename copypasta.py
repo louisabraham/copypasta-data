@@ -110,7 +110,7 @@ model.add(Dropout(.5))
 model.add(Dense(len(chars)))
 model.add(Activation('softmax'))
 
-optimizer = RMSprop(lr=0.01)
+optimizer = RMSprop(lr=0.003)
 model.compile(loss='categorical_crossentropy', optimizer=optimizer)
 
 model.summary()
