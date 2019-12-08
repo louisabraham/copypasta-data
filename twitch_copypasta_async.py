@@ -14,15 +14,17 @@ import sys
 
 from bs4 import BeautifulSoup
 
-url = 'https://twitch.gimu.org/'
-reurl = re.compile(url[:-1] + '\?page=(\d+)')
+url = "https://twitch.gimu.org/"
+reurl = re.compile(url[:-1] + "\?page=(\d+)")
 
 html = urlopen(url)
-soup = BeautifulSoup(html, 'lxml')
-n_pages = max(int(reurl.match(a.get('href')).group(1))
-              for a in soup.find_all('a', {'href': reurl}))
+soup = BeautifulSoup(html, "lxml")
+n_pages = max(
+    int(reurl.match(a.get("href")).group(1))
+    for a in soup.find_all("a", {"href": reurl})
+)
 
-urls = list(url + '?page=%s' % i for i in range(1, n_pages + 1))
+urls = list(url + "?page=%s" % i for i in range(1, n_pages + 1))
 
 
 def extract_copypastas(url):
@@ -31,8 +33,8 @@ def extract_copypastas(url):
     except Exception as e:
         print(e)
         return []
-    soup = BeautifulSoup(html, 'lxml')
-    return [str(pasta.p.text) for pasta in soup.find_all(class_='pasta-entry')]
+    soup = BeautifulSoup(html, "lxml")
+    return [str(pasta.p.text) for pasta in soup.find_all(class_="pasta-entry")]
 
 
 pool = mp.Pool(processes=50)

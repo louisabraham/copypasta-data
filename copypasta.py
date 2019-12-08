@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-'''Example script to generate text from Nietzsche's writings.
+"""Example script to generate text from Nietzsche's writings.
 
 At least 20 epochs are required before the generated text
 starts sounding coherent.
@@ -10,7 +10,7 @@ networks are quite computationally intensive.
 
 If you try this script on new data, make sure your corpus
 has at least ~100k characters. ~1M is better.
-'''
+"""
 
 from __future__ import print_function
 from keras.callbacks import LambdaCallback
@@ -27,7 +27,7 @@ import io
 
 def sample(preds, temperature=1.0):
     # helper function to sample an index from a probability array
-    preds = np.asarray(preds).astype('float64')
+    preds = np.asarray(preds).astype("float64")
     preds = np.log(preds) / temperature
     exp_preds = np.exp(preds)
     preds = exp_preds / np.sum(exp_preds)
@@ -40,14 +40,14 @@ def on_epoch_end(epoch, logs):
         return
     # Function invoked at end of each epoch. Prints generated text.
     print()
-    print('----- Generating text after Epoch: %d' % epoch)
+    print("----- Generating text after Epoch: %d" % epoch)
 
     start_index = random.randint(0, len(text) - maxlen - 1)
     for diversity in [0.2, 0.5, 1.0, 1.2]:
-        print('----- diversity:', diversity)
+        print("----- diversity:", diversity)
 
-        generated = ''
-        sentence = text[start_index: start_index + maxlen]
+        generated = ""
+        sentence = text[start_index : start_index + maxlen]
         generated += sentence
         print('----- Generating with seed: "' + sentence + '"')
         sys.stdout.write(generated)
@@ -55,7 +55,7 @@ def on_epoch_end(epoch, logs):
         for i in range(400):
             x_pred = np.zeros((1, maxlen, len(chars)))
             for t, char in enumerate(sentence):
-                x_pred[0, t, char_indices[char]] = 1.
+                x_pred[0, t, char_indices[char]] = 1.0
 
             preds = model.predict(x_pred, verbose=0)[0]
             next_index = sample(preds, diversity)
@@ -69,12 +69,12 @@ def on_epoch_end(epoch, logs):
         print()
 
 
-text = io.open('reddit.txt', encoding='utf-8').read()
+text = io.open("reddit.txt", encoding="utf-8").read()
 # text += io.open('copypasta2.txt', encoding='utf-8').read()
-print('corpus length:', len(text))
+print("corpus length:", len(text))
 
 chars = sorted(list(set(text)))
-print('total chars:', len(chars))
+print("total chars:", len(chars))
 char_indices = dict((c, i) for i, c in enumerate(chars))
 indices_char = dict((i, c) for i, c in enumerate(chars))
 
@@ -84,11 +84,11 @@ step = 3
 sentences = []
 next_chars = []
 for i in range(0, len(text) - maxlen, step):
-    sentences.append(text[i: i + maxlen])
+    sentences.append(text[i : i + maxlen])
     next_chars.append(text[i + maxlen])
-print('nb sequences:', len(sentences))
+print("nb sequences:", len(sentences))
 
-print('Vectorization...')
+print("Vectorization...")
 x = np.zeros((len(sentences), maxlen, len(chars)), dtype=np.bool)
 y = np.zeros((len(sentences), len(chars)), dtype=np.bool)
 for i, sentence in enumerate(sentences):
@@ -98,30 +98,28 @@ for i, sentence in enumerate(sentences):
 
 
 # build the model: a single LSTM
-print('Build model...')
+print("Build model...")
 model = Sequential()
 model.add(InputLayer(input_shape=(maxlen, len(chars))))
 model.add(Bidirectional(GRU(128, return_sequences=True, unroll=True)))
-model.add(Dropout(.5))
+model.add(Dropout(0.5))
 model.add(Bidirectional(GRU(64, unroll=True)))
-model.add(Dropout(.5))
+model.add(Dropout(0.5))
 model.add(Dense(128))
-model.add(Activation('relu'))
-model.add(Dropout(.5))
+model.add(Activation("relu"))
+model.add(Dropout(0.5))
 model.add(Dense(len(chars)))
-model.add(Activation('softmax'))
+model.add(Activation("softmax"))
 
 optimizer = RMSprop(lr=0.003)
-model.compile(loss='categorical_crossentropy', optimizer=optimizer)
+model.compile(loss="categorical_crossentropy", optimizer=optimizer)
 
 model.summary()
 
 print_callback = LambdaCallback(on_epoch_end=on_epoch_end)
 
-model.fit(x, y,
-          batch_size=512,
-          epochs=21,
-          validation_split=0.1,
-          callbacks=[print_callback])
+model.fit(
+    x, y, batch_size=512, epochs=21, validation_split=0.1, callbacks=[print_callback]
+)
 
-model.save('model_reddit.h5')
+model.save("model_reddit.h5")
