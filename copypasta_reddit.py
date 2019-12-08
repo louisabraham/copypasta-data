@@ -8,7 +8,7 @@ n is the first command line argument
 if n is -1, continues until there is a 'next' link
 
 url is the second argument and defaults to
-https://www.reddit.com/r/copypasta/top/?sort=top&t=all
+https://old.reddit.com/r/copypasta/top/?sort=top&t=all
 """
 
 import multiprocessing as mp
@@ -61,7 +61,7 @@ def extract_copypasta(url):
 
 def handle_page(pool, soup):
     elements = soup.select('#siteTable')[0]
-    urls = ['https://www.reddit.com' + urllib.parse.quote(i.get('data-url'))
+    urls = ['https://old.reddit.com' + urllib.parse.quote(i.get('data-url'))
             for i in elements.find_all('div', {'data-domain': 'self.copypasta'})]
     return pool.map(extract_copypasta, urls)
 
@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     nb_pages = int(sys.argv[1])
     url = sys.argv[2] if len(
-        sys.argv) > 2 else 'https://www.reddit.com/r/copypasta/top/?sort=top&t=all'
+        sys.argv) > 2 else 'https://old.reddit.com/r/copypasta/top/?sort=top&t=all'
 
     for _ in tqdm(range(nb_pages) if nb_pages != -1 else count()):
 
